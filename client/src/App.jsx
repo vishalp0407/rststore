@@ -1,7 +1,12 @@
+import Header from "@components/Header";
+import Footer from "@components/Footer";
+
 const App = () => {
   return (
-    <div className="underline text-3xl font-semibold text-red-500">
-      Rst Store
+    <div className="flex min-h-screen flex-col bg-slate-100">
+      <Header />
+      <div className="flex-grow"></div>
+      <Footer />
     </div>
   );
 };
