@@ -6,6 +6,9 @@ import DeskTopMenu from "./DesktopMenu";
 import MobileMenuIcon from "./MobileMenuIcon";
 import MobileMenu from "./MobileMenu";
 
+// megaMenu
+import MegaMenu from "./MegaMenu";
+
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -22,6 +25,7 @@ const Header = () => {
         </div>
       </div>
       <div>{isOpen && <MobileMenu setIsOpen={setIsOpen} />}</div>
+      <MegaMenu />
     </header>
   );
 };
