@@ -1,8 +1,10 @@
+import { Link } from "react-router-dom";
+
 import CardImage from "./CardImage";
 import Rating from "./Rating";
 const ProductCard = ({ product }) => {
   return (
-    <a href={`/product/${product._id}`}>
+    <Link to={`/product/${product._id}`}>
       <CardImage name={product.name} image={product.image} />
       <div className="mt-2 flex justify-between gap-4">
         <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-900">
@@ -11,7 +13,7 @@ const ProductCard = ({ product }) => {
         <p className="text-sm font-semibold text-slate-900">₹{product.price}</p>
       </div>
       <Rating value={product.rating} />
-    </a>
+    </Link>
   );
 };
 

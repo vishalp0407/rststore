@@ -1,8 +1,9 @@
+import { Link } from "react-router-dom";
 const Logo = () => {
   return (
     <div>
-      <a
-        href="/"
+      <Link
+        to="/"
         className="flex gap-2 min-w-32 items-center text-indigo-800 hover:opacity-80 transition-all"
       >
         <svg
@@ -22,7 +23,7 @@ const Logo = () => {
         <span className="text-base font-bold uppercase tracking-normal text-slate-950">
           RST Store
         </span>
-      </a>
+      </Link>
     </div>
   );
 };

@@ -1,7 +1,8 @@
+import { Link } from "react-router-dom";
 const CategoryImageBox = ({ url, imageUrl, label }) => {
   return (
     <div>
-      <a href={url} className="relative block rounded-xl overflow-hidden">
+      <Link to={url} className="relative block rounded-xl overflow-hidden">
         <span className="absolute bottom-10 z-10 text-sm font-semibold uppercase tracking-wide bg-white left-1/2 -translate-1/2 translate-y-1/2 py-2 px-3 rounded-lg text-center">
           {label}
         </span>
@@ -10,7 +11,7 @@ const CategoryImageBox = ({ url, imageUrl, label }) => {
           src={imageUrl}
           alt={label}
         />
-      </a>
+      </Link>
     </div>
   );
 };
