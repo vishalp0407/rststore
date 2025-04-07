@@ -9,6 +9,11 @@
     "client": "npm run dev --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
+  "imports": {
+		"#config/*": "./server/config/*",
+		"#data/*": "./server/data/*"
+	},
+
   "author": "Vishal Prajapati",
   "license": "UNLICENCED",
   "description": "",
