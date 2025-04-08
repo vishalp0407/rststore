@@ -3,7 +3,8 @@
 		"baseUrl": "./server",
 		"paths": {
 			"#data/*": ["data/*"],
-			"#config/*": ["config/*"]
+			"#config/*": ["config/*"],
+			"#models":["models/*"]
 		},
 		"module": "CommonJS",
 		"target": "ES6"

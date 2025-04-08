@@ -7,17 +7,22 @@
     "start": "node server/main",
     "server": "nodemon server/main",
     "client": "npm run dev --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "data:import": "node server/seeder",
+		"data:destroy": "node server/seeder -d"
+
   },
   "imports": {
     "#config/*": "./server/config/*",
-    "#data/*": "./server/data/*"
+    "#data/*": "./server/data/*",
+    "#models/*": "./server/models/*"
   },
   "author": "Vishal Prajapati",
   "license": "UNLICENCED",
   "description": "",
   "dependencies": {
     "bcryptjs": "^3.0.2",
+    "colors": "^1.4.0",
     "dotenv": "^16.4.7",
     "express": "^5.0.1",
     "mongoose": "^8.13.2",
