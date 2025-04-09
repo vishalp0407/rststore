@@ -3,8 +3,10 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 
 // import products from "./data/products.data.js";
-import products from "#data/products.data.js";
+// import products from "#data/products.data.js";
+
 import connectDB from "#config/db.config.js";
+import productRoutes from "#routes/product.route.js";
 
 dotenv.config();
 const port = process.env.PORT;
@@ -18,19 +20,7 @@ app.get("/", (req, res) => {
   res.send("Api is running");
 });
 
-app.get("/api/v1/products", (req, res) => {
-  res.json(products);
-});
-
-app.get("/api/v1/products/:id", (req, res) => {
-  const product = products.find((prod) => prod._id === req.params.id);
-  if (product) {
-    res.json(product);
-  } else {
-    res.status(404);
-    res.json({ message: "Product not found" });
-  }
-});
+app.use("/api/v1/products", productRoutes);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

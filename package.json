@@ -15,7 +15,8 @@
   "imports": {
     "#config/*": "./server/config/*",
     "#data/*": "./server/data/*",
-    "#models/*": "./server/models/*"
+    "#models/*": "./server/models/*",
+    "#routes/*": "./server/routes/*"
   },
   "author": "Vishal Prajapati",
   "license": "UNLICENCED",
