@@ -16,7 +16,8 @@
     "#config/*": "./server/config/*",
     "#data/*": "./server/data/*",
     "#models/*": "./server/models/*",
-    "#routes/*": "./server/routes/*"
+    "#routes/*": "./server/routes/*",
+    "#middlewares/*": "./server/middlewares/*"
   },
   "author": "Vishal Prajapati",
   "license": "UNLICENCED",
