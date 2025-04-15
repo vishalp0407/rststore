@@ -6,6 +6,9 @@ import Rating from "@components/ProductCard/Rating";
 import { useGetProductDetailsQuery } from "@slices/productApiSlice";
 import QuantitySelector from "./QuantitySelector";
 
+import Alert from "@components/Alert";
+import Loader from "@components/Loader";
+
 const ProductDetailsScreen = () => {
   const { id: productId } = useParams();
 
@@ -27,9 +30,11 @@ const ProductDetailsScreen = () => {
         </Link>
 
         {isLoading ? (
-          <p>Loading...</p>
+          <Loader />
         ) : isError ? (
-          <p>{error?.data?.message || error?.error}</p>
+          <div className="mt-5">
+            <Alert type="error">{error.data?.message || error?.error}</Alert>
+          </div>
         ) : (
           <div className="lg:grid lg:grid-cols-12 lg:gap-x-8">
             {/* Image */}
