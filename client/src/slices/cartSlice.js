@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+import { updateCart } from "@utils/cartUtils";
 const initialState = localStorage.getItem("cart")
   ? JSON.parse(localStorage.getItem("cart"))
   : { cartItems: [] };
@@ -21,26 +21,11 @@ const cartSlice = createSlice({
         state.cartItems = [...state.cartItems, item];
       }
 
-      // Calculate items price
-      state.itemsPrice = state.cartItems.reduce(
-        (acc, currVal) => acc + currVal.price * currVal.qty,
-        0
-      );
-
-      // Calculate shipping price
-      state.shippingPrice = state.itemsPrice > 5000 ? 0 : 5000;
-
-      // Calculate tax price
-      state.taxPrice = 0.18 * state.itemsPrice;
-
-      // Calculate total price
-      state.totalPrice =
-        state.itemsPrice + state.shippingPrice + state.taxPrice;
-
-      localStorage.setItem("cart", JSON.stringify(state));
+      return updateCart(state);
     },
   },
 });
 
-export const { addToCart } = cartSlice;
+export const { addToCart } = cartSlice.actions;
+
 export default cartSlice.reducer;

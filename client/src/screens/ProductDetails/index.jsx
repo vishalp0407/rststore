@@ -1,16 +1,23 @@
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
+import { useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { Link, useParams } from "react-router-dom";
-
-import Rating from "@components/ProductCard/Rating";
-import { useGetProductDetailsQuery } from "@slices/productApiSlice";
-import QuantitySelector from "./QuantitySelector";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import Alert from "@components/Alert";
 import Loader from "@components/Loader";
+import Rating from "@components/ProductCard/Rating";
+import { addToCart } from "@slices/cartSlice";
+import { useGetProductDetailsQuery } from "@slices/productApiSlice";
+import QuantitySelector from "./QuantitySelector";
 
 const ProductDetailsScreen = () => {
   const { id: productId } = useParams();
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [qty, setQty] = useState(1);
 
   const {
     data: product,
@@ -18,6 +25,11 @@ const ProductDetailsScreen = () => {
     isError,
     error,
   } = useGetProductDetailsQuery(productId);
+
+  const handleAddToCart = () => {
+    dispatch(addToCart({ ...product, qty }));
+    navigate("/cart");
+  };
 
   return (
     <div className="bg-white pb-16 pt-6 sm:pb-24">
@@ -79,10 +91,20 @@ const ProductDetailsScreen = () => {
               </div>
 
               {/* Quantity Selector */}
-              <QuantitySelector countInStock={product.countInStock} />
+              <QuantitySelector
+                countInStock={product.countInStock}
+                quantity={qty}
+                setQuantity={setQty}
+              />
 
               {/* Add to cart button */}
-              <button className="foucs:outline-none foucs:ring-2 mt-8 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white transition-all hover:bg-indigo-700">
+              <button
+                onClick={handleAddToCart}
+                disabled={product.countInStock === 0}
+                className={`mt-8 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white transition-all cursor-pointer hover:bg-indigo-700 ${
+                  product.countInStock === 0 && "cursor-not-allowed opacity-30"
+                }`}
+              >
                 Add to cart
               </button>
 

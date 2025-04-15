@@ -8,6 +8,7 @@
 			"#routes/*":["routes/*"],
 			"#middlewares/*":["middlewares/*"],
 			"#controllers/*":["controllers/*"],
+			"#utils/*":["utils/*"],
 		},
 		"module": "CommonJS",
 		"target": "ES6"
