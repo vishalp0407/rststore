@@ -1,9 +1,12 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Provider } from "react-redux";
 
 import Layout from "@components/Layout";
 import HomeScreen from "@screens/Home";
 import ErrorScreen from "@screens/Error";
 import ProductDetailsScreen from "@screens/ProductDetails";
+
+import store from "./store";
 
 const router = createBrowserRouter([
   {
@@ -24,7 +27,11 @@ const router = createBrowserRouter([
 ]);
 
 const App = () => {
-  return <RouterProvider router={router} />;
+  return (
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
+  );
 };
 
 export default App;

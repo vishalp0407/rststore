@@ -9,8 +9,7 @@
     "client": "npm run dev --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "data:import": "node server/seeder",
-		"data:destroy": "node server/seeder -d"
-
+    "data:destroy": "node server/seeder -d"
   },
   "imports": {
     "#config/*": "./server/config/*",
