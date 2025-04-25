@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
+import cookieParser from "cookie-parser";
 
 import connectDB from "#config/db.config.js";
 import productRoutes from "#routes/product.route.js";
@@ -15,6 +16,7 @@ connectDB();
 const app = express();
 app.use(morgan("dev"));
 app.use(express.json());
+app.use(cookieParser());
 
 app.get("/", (req, res) => {
   res.send("Api is running");
