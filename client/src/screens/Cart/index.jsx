@@ -2,7 +2,7 @@ import Alert from "@components/Alert";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 
-import { addToCart } from "@slices/cartSlice";
+import { addToCart, removeFromCart } from "@slices/cartSlice";
 import CartItem from "./CartItem";
 import Summary from "./Summary";
 
@@ -15,6 +15,13 @@ const CartScreen = () => {
 
   const handleAddToCart = async (product, qty) => {
     dispatch(addToCart({ ...product, qty }));
+  };
+
+  const handleRemoveFromCart = (productId) => {
+    dispatch(removeFromCart(productId));
+  };
+  const handleCheckout = () => {
+    navigate("/login?redirect=/shipping");
   };
 
   return (
@@ -43,6 +50,7 @@ const CartScreen = () => {
                     product={product}
                     index={index}
                     handleAddToCart={handleAddToCart}
+                    handleRemoveFromCart={handleRemoveFromCart}
                   />
                 ))}
               </ul>
@@ -55,6 +63,7 @@ const CartScreen = () => {
               shippingPrice={cart.shippingPrice}
               taxPrice={cart.taxPrice}
               totalPrice={cart.totalPrice}
+              handleCheckout={handleCheckout}
             />
           </div>
         )}

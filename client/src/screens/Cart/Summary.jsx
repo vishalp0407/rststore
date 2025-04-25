@@ -4,6 +4,7 @@ const Summary = ({
   shippingPrice,
   taxPrice,
   totalPrice,
+  handleCheckout,
 }) => {
   return (
     <section className="mt-16 rounded-lg bg-slate-50 px-4 py-6 sm:p-6 lg:col-span-5 lg:mt-0 lg:p-8">
@@ -36,7 +37,10 @@ const Summary = ({
       </dl>
 
       <div className="mt-10">
-        <button className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-3 text-base font-medium text-white shadow-sm transition-all hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50">
+        <button
+          onClick={handleCheckout}
+          className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-3 text-base font-medium text-white shadow-sm transition-all hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+        >
           Checkout
         </button>
       </div>
