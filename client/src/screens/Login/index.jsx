@@ -1,13 +1,42 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+
+import { setCredentials } from "@slices/authSlice";
+import { useLoginMutation } from "@slices/userApiSlice";
 
 const LoginScreen = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const { search } = useLocation();
+  const sp = new URLSearchParams(search);
+  const redirect = sp.get("redirect") || "/";
+
+  const [login, { isLoading }] = useLoginMutation();
+  const { userInfo } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate(redirect);
+    }
+  }, [navigate, redirect, userInfo]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted");
+    try {
+      const response = await login({ email, password }).unwrap();
+
+      dispatch(setCredentials({ ...response }));
+      navigate(redirect);
+    } catch (error) {
+      console.error(error);
+      toast.error(error.data?.message);
+    }
   };
 
   return (
@@ -61,7 +90,7 @@ const LoginScreen = () => {
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Sign In
+                {isLoading ? "Loading..." : "Sign In"}
               </button>
             </div>
           </form>

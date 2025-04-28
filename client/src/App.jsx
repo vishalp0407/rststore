@@ -1,5 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import Layout from "@components/Layout";
 import HomeScreen from "@screens/Home";
@@ -45,6 +47,11 @@ const App = () => {
   return (
     <Provider store={store}>
       <RouterProvider router={router} />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={true}
+      />
     </Provider>
   );
 };
