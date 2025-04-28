@@ -27,9 +27,19 @@ const userSchema = mongoose.Schema(
     collection: "users",
   }
 );
+// when user login than compar the password
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
+
+// when user the register the hasing their
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    next();
+  }
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
 
 const UserModel = mongoose.model("UserModel", userSchema);
 
