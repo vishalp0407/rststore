@@ -6,6 +6,8 @@ import HomeScreen from "@screens/Home";
 import CartScreen from "@screens/Cart";
 import ErrorScreen from "@screens/Error";
 import ProductDetailsScreen from "@screens/ProductDetails";
+import LoginScreen from "@screens/Login";
+import RegisterScreen from "@screens/Register";
 
 import store from "./store";
 
@@ -26,6 +28,14 @@ const router = createBrowserRouter([
       {
         path: "/cart",
         element: <CartScreen />,
+      },
+      {
+        path: "/login",
+        element: <LoginScreen />,
+      },
+      {
+        path: "/register",
+        element: <RegisterScreen />,
       },
     ],
   },
