@@ -3,18 +3,26 @@ import {
   TagIcon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-import { useSelector } from "react-redux";
+
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 import MenuItem from "./MenuItem";
+import { logout } from "@slices/authSlice";
+import { useLogoutMutation } from "@slices/userApiSlice";
 
 const DeskTopMenu = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const { cartItems } = useSelector((state) => state.cart);
   const { userInfo } = useSelector((state) => state.auth);
 
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
+
+  const [logoutApiCall] = useLogoutMutation();
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -30,8 +38,14 @@ const DeskTopMenu = () => {
     };
   }, []);
 
-  const handleLogout = () => {
-    console.log("Logout");
+  const handleLogout = async () => {
+    try {
+      await logoutApiCall().unwrap();
+      dispatch(logout());
+      navigate("/login");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

@@ -4,7 +4,7 @@ import UserModel from "#models/user.model.js";
 
 /**
  * @desc		Auth user
- * @route		POST /api/users/login
+ * @route		POST /api/v1/users/login
  * @access	Public
  */
 const authUser = async (req, res) => {
@@ -28,7 +28,7 @@ const authUser = async (req, res) => {
 
 /**
  * @desc		Register user
- * @route		POST /api/users
+ * @route		POST /api/v1/users
  * @access	Public
  */
 const registerUser = async (req, res) => {
@@ -62,12 +62,16 @@ const registerUser = async (req, res) => {
  * @access	Private
  */
 const logoutUser = async (req, res) => {
-  res.send("Logout user");
+  res.cookie("jwt", "", {
+    httpOnly: true,
+    expires: new Date(0),
+  });
+  res.status(200).json({message:'User logged out'})
 };
 
 /**
  * @desc		Get user profile
- * @route		GET /api/users/profile
+ * @route		GET /api/v1/users/profile
  * @access	Private
  */
 const getUserProfile = async (req, res) => {
@@ -87,7 +91,7 @@ const getUserProfile = async (req, res) => {
 
 /**
  * @desc		Update user profile
- * @route		PUT /api/users/profile
+ * @route		PUT /api/v1/users/profile
  * @access	Private
  */
 const updateUserProfile = async (req, res) => {
