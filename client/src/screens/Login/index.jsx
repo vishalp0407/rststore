@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
 import { setCredentials } from "@slices/authSlice";
-import { useLoginMutation } from "@slices/userApiSlice";
+import { useLoginMutation } from "@slices/usersApiSlice";
 
 const LoginScreen = () => {
   const dispatch = useDispatch();

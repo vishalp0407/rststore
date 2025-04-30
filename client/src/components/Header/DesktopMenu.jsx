@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import MenuItem from "./MenuItem";
 import { logout } from "@slices/authSlice";
-import { useLogoutMutation } from "@slices/userApiSlice";
+import { useLogoutMutation } from "@slices/usersApiSlice";
 
 const DeskTopMenu = () => {
   const dispatch = useDispatch();
