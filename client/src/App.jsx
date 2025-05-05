@@ -12,6 +12,9 @@ import LoginScreen from "@screens/Login";
 import RegisterScreen from "@screens/Register";
 import ShippingScreen from "@screens/Shipping";
 
+// Private Route
+import PrivateRoute from "@components/PrivateRoute";
+
 import store from "./store";
 
 const router = createBrowserRouter([
@@ -41,8 +44,14 @@ const router = createBrowserRouter([
         element: <RegisterScreen />,
       },
       {
-        path: "/shipping",
-        element: <ShippingScreen />,
+        path: "",
+        element: <PrivateRoute />,
+        children: [
+          {
+            path: "/shipping",
+            element: <ShippingScreen />,
+          },
+        ],
       },
     ],
   },
