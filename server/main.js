@@ -7,6 +7,7 @@ import connectDB from "#config/db.config.js";
 import productRoutes from "#routes/product.route.js";
 import userRoutes from "#routes/user.route.js";
 import { errorHandler } from "#middlewares/error.middleware.js";
+import orderRoutes from "#routes/order.route.js";
 
 dotenv.config();
 const port = process.env.PORT;
@@ -24,6 +25,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/orders", orderRoutes);
 
 app.use(errorHandler);
 
