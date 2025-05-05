@@ -12,6 +12,7 @@ import LoginScreen from "@screens/Login";
 import RegisterScreen from "@screens/Register";
 import ShippingScreen from "@screens/Shipping";
 import PaymentScreen from "@screens/Payment";
+import PlaceOrder from "@screens/PlaceOrder";
 // Private Route
 import PrivateRoute from "@components/PrivateRoute";
 
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
           {
             path: "/payment",
             element: <PaymentScreen />,
+          },
+          {
+            path: "/placeorder",
+            element: <PlaceOrder />,
           },
         ],
       },
