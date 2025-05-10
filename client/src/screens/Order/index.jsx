@@ -2,10 +2,10 @@ import {
   CheckBadgeIcon,
   ExclamationTriangleIcon,
 } from "@heroicons/react/24/outline";
-import { Link, useParams } from "react-router-dom";
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 import Alert from "@components/Alert";
 import Loader from "@components/Loader";
@@ -14,39 +14,10 @@ import {
   useGetPayPalClientIdQuery,
   usePayOrderMutation,
 } from "@slices/orderApiSlice";
-import { toast } from "react-toastify";
+import { useEffect } from "react";
 
 const OrderScreen = () => {
   const { id: orderId } = useParams();
-
-  const [payOrder, { isLoading: loadingPay }] = usePayOrderMutation();
-  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
-
-  const {
-    data: paypal,
-    isLoading: loadingPaypal,
-    error: errorPayPal,
-  } = useGetPayPalClientIdQuery();
-
-  useEffect(() => {
-    if (!errorPayPal && !loadingPaypal && paypal.clientID) {
-      const loadPayPalScript = async () => {
-        paypalDispatch({
-          type: "resetOptions",
-          value: {
-            "client-id": paypal.clientId,
-            currency: "USD",
-          },
-        });
-        paypalDispatch({ type: "setLoadingStatus", value: "pending" });
-      };
-      if (order && !order.isPaid) {
-        if (!window.paypal) {
-          loadPayPalScript();
-        }
-      }
-    }
-  }, [order, paypal, paypalDispatch, loadingPay, errorPayPal, loadingPaypal]);
 
   const {
     data: order,
@@ -54,6 +25,70 @@ const OrderScreen = () => {
     error,
     refetch,
   } = useGetOrderDetailsQuery(orderId);
+
+  const [payOrder, { isLoading: loadingPay }] = usePayOrderMutation();
+
+  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
+
+  const {
+    data: paypal,
+    isLoading: loadingPayPal,
+    error: errorPayPal,
+  } = useGetPayPalClientIdQuery();
+
+  useEffect(() => {
+    if (!errorPayPal && !loadingPayPal && paypal.clientId) {
+      const loadPayPalScript = async () => {
+        paypalDispatch({
+          type: "resetOptions",
+          value: {
+            "client-id": paypal.clientId,
+            currency: "USD",
+          },
+        }),
+          paypalDispatch({ type: "setLoadingStatus", value: "pending" });
+      };
+
+      if (order && !order.isPaid) {
+        if (!window.paypal) {
+          loadPayPalScript();
+        }
+      }
+    }
+  }, [order, paypal, paypalDispatch, loadingPay, errorPayPal, loadingPayPal]);
+
+  const onApprove = (data, actions) => {
+    return actions.order.capture().then(async function (details) {
+      try {
+        console.log(details);
+        await payOrder({ id: orderId, details });
+        refetch();
+        toast.success("Order paid successfully");
+      } catch (error) {
+        toast.error(error?.data?.message || error?.error);
+      }
+    });
+  };
+
+  const onError = (error) => {
+    toast.error(error.message);
+  };
+
+  const createOrder = (data, actions) => {
+    return actions.order
+      .create({
+        purchase_units: [
+          {
+            amount: {
+              value: order.totalPrice,
+            },
+          },
+        ],
+      })
+      .then((orderId) => {
+        return orderId;
+      });
+  };
 
   return isLoading ? (
     <Loader />
@@ -192,6 +227,25 @@ const OrderScreen = () => {
                   </dd>
                 </div>
               </dl>
+
+              <div className="space-y-6 border-t border-slate-200 px-4 py-6 sm:px-6">
+                {!order.isPaid && (
+                  <>
+                    {loadingPay && <Loader />}
+                    {isPending ? (
+                      <Loader />
+                    ) : (
+                      <div>
+                        <PayPalButtons
+                          createOrder={createOrder}
+                          onApprove={onApprove}
+                          onError={onError}
+                        />
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
 
               {isLoading && <Loader />}
             </div>
