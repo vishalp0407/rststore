@@ -26,6 +26,9 @@ app.get("/", (req, res) => {
 app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/orders", orderRoutes);
+app.get("/api/vq/config/paypal", (req, res) => {
+  res.json({ clientId: process.env.PAYPAL_CLIENT_ID });
+});
 
 app.use(errorHandler);
 

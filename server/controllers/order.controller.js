@@ -26,7 +26,7 @@ const createOrder = async (req, res) => {
       })),
       user: req.user._id,
       shippingAddress,
-      paymentmethod,
+      paymentMethod,
       itemsPrice,
       shippingPrice,
       taxPrice,
@@ -71,7 +71,22 @@ const getOrderById = async (req, res) => {
  * @access	Private
  */
 const updateOrderToPaid = async (req, res) => {
-  res.send("Update order to paid");
+  const order = await OrderModel.findById(req.params.id);
+
+  if (order) {
+    order.ispaid = true;
+    order.paidAt = Date.now();
+    order.paymentResult = {
+      id: req.body.status,
+      update_time: req.body.update_time,
+      email_address: req.body.payer.email_address,
+    };
+    const updaatedOrder = await order.save();
+    res.status(200).json(updaatedOrder);
+  } else {
+    res.status(404);
+    throw new Error("Order not found");
+  }
 };
 
 /**
