@@ -104,7 +104,8 @@ const updateOrderToDelivered = async (req, res) => {
  * @access	Private/Admin
  */
 const getOrders = async (req, res) => {
-  res.send("Get all orders");
+  const orders = await OrderModel.find({}).populate("user", "name email");
+  res.status(200).json(orders);
 };
 
 export {
