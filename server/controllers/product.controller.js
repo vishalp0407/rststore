@@ -24,5 +24,27 @@ const getProductById = async (req, res) => {
     throw new Error("Product not found");
   }
 };
+/**
+ * @desc Create product
+ * @route POST/api/v1/products
+ * @access Private/Admin
+ */
 
-export { getProductById, getProducts };
+const createProduct = async (req, res) => {
+  const product = new ProductModel({
+    name: "sample name",
+    price: 0,
+    user: req.user._id,
+    image: "/images/sample.jpg",
+    brand: "sample brand",
+    category: "Sample category",
+    countInStock: 0,
+    numReviews: 0,
+    description: "Sample description",
+    content: "Sample Content",
+  });
+  const createdProduct = await product.save();
+  res.status(201).json(createdProduct);
+};
+
+export { getProductById, getProducts, createProduct };

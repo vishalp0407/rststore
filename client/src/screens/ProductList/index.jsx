@@ -1,17 +1,47 @@
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 import Alert from "@components/Alert";
 import Loader from "@components/Loader";
-import { useGetProductsQuery } from "@slices/productApiSlice";
+import {
+  useGetProductsQuery,
+  useCreateProductMutation,
+} from "@slices/productApiSlice";
 
 const ProductListScreen = () => {
-  const { data: products, error, isLoading } = useGetProductsQuery();
+  const { data: products, error, isLoading, refetch } = useGetProductsQuery();
+  const [createProduct, { isLoading: loadingCreate }] =
+    useCreateProductMutation();
+  const handleDelte = async (id) => {
+    if (window.confirm("Are your sure?")) {
+      console.log("delete", id);
+    }
+  };
+  const handleCreateProduct = async () => {
+    if (window.confirm("Are you sure you want to create a new product?")) {
+      try {
+        await createProduct();
+        refetch();
+      } catch (error) {
+        toast.error(error?.data?.message || error?.message);
+      }
+    }
+  };
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 pb-24 pt-16 sm:px-6 lg:max-w-7xl lg:px-8">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-          All Products
-        </h1>
+        <div className="flex justify-between">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            All Products
+          </h1>
+          <button
+            onClick={handleCreateProduct}
+            type="submit"
+            className="rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm transition-all hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+          >
+            {loadingCreate ? "Loading..." : "Create Product"}
+          </button>
+        </div>
         {isLoading ? (
           <Loader />
         ) : error ? (
@@ -81,7 +111,7 @@ const ProductListScreen = () => {
                         </td>
                         <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                           <Link
-                            to={`/admin/${product._id}/edit`}
+                            to={`/admin/product/${product._id}/edit`}
                             className="text-indigo-600 hover:text-indigo-900"
                           >
                             Edit
