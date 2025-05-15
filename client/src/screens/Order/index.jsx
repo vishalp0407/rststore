@@ -3,6 +3,7 @@ import {
   ExclamationTriangleIcon,
 } from "@heroicons/react/24/outline";
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -10,11 +11,11 @@ import { toast } from "react-toastify";
 import Alert from "@components/Alert";
 import Loader from "@components/Loader";
 import {
+  useDeliverOrderMutation,
   useGetOrderDetailsQuery,
   useGetPayPalClientIdQuery,
   usePayOrderMutation,
 } from "@slices/orderApiSlice";
-import { useEffect } from "react";
 
 const OrderScreen = () => {
   const { id: orderId } = useParams();
@@ -28,7 +29,12 @@ const OrderScreen = () => {
 
   const [payOrder, { isLoading: loadingPay }] = usePayOrderMutation();
 
+  const [deliverOrder, { isLoading: loadingDeliver }] =
+    useDeliverOrderMutation();
+
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
+
+  const { userInfo } = useSelector((state) => state.auth);
 
   const {
     data: paypal,
@@ -45,8 +51,8 @@ const OrderScreen = () => {
             "client-id": paypal.clientId,
             currency: "USD",
           },
-        }),
-          paypalDispatch({ type: "setLoadingStatus", value: "pending" });
+        });
+        paypalDispatch({ type: "setLoadingStatus", value: "pending" });
       };
 
       if (order && !order.isPaid) {
@@ -65,10 +71,16 @@ const OrderScreen = () => {
         refetch();
         toast.success("Order paid successfully");
       } catch (error) {
-        toast.error(error?.data?.message || error?.error);
+        toast.error(error?.data?.message || error?.message);
       }
     });
   };
+
+  // const onApproveTest = async () => {
+  //   await payOrder({ id: orderId, details: { payer: {} } });
+  //   refetch();
+  //   toast.success('Order paid successfully');
+  // };
 
   const onError = (error) => {
     toast.error(error.message);
@@ -90,13 +102,23 @@ const OrderScreen = () => {
       });
   };
 
+  const handleDeliver = async () => {
+    try {
+      await deliverOrder(orderId);
+      refetch();
+      toast.success("Order marked as delivered");
+    } catch (error) {
+      toast.error(error?.data?.message || error?.message);
+    }
+  };
+
   return isLoading ? (
     <Loader />
   ) : error ? (
-    <Alert type="error">{error?.data?.message}</Alert>
+    <Alert type="error">{error}</Alert>
   ) : (
     <div className="bg-white">
-      <div className="mx-auto max-w-2xl px-4 py-16 pb-24 pt-12 sm:px-6 lg:max-w-7xl lg:px-8">
+      <div className="mx-auto max-w-2xl px-4 pb-24 pt-16 sm:px-6 lg:max-w-7xl lg:px-8">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
           Your Order <span className="text-xl font-medium">({orderId})</span>
         </h1>
@@ -108,15 +130,20 @@ const OrderScreen = () => {
                 <dt className="font-medium text-slate-900">Shipping</dt>
                 <dd className="mt-2">
                   <address className="not-italic">
-                    <span className="block">
-                      {order.shippingAddress.address}
+                    <span className="block text-slate-800">
+                      <strong>{order?.user?.name}</strong>
+                      <br />
+                      {order?.user?.email}
+                    </span>
+                    <span className="mt-3 block">
+                      {order?.shippingAddress?.address}
                     </span>
                     <span className="block">
-                      {order.shippingAddress.city},{" "}
-                      {order.shippingAddress.postalCode}
+                      {order?.shippingAddress?.city}
+                      {order?.shippingAddress?.postalCode}
                     </span>
                     <span className="block">
-                      {order.shippingAddress.country}
+                      {order?.shippingAddress?.country}
                     </span>
                   </address>
 
@@ -137,23 +164,25 @@ const OrderScreen = () => {
               </div>
               <div>
                 <dt className="font-medium text-slate-900">Payment</dt>
-                <dd className="mt-2">
-                  <span className="capitalize text-slate-900">
-                    {order.paymentMethod}
-                  </span>
+                <dd className="mt-2 space-y-2 sm:flex sm:space-x-4 sm:space-y-0">
+                  <div className="flex-auto">
+                    <p className="capitalize text-slate-900">
+                      {order?.paymentMethod}
+                    </p>
 
-                  <div className="mt-4">
-                    {order?.isPaid ? (
-                      <span className="flex items-center gap-1.5 text-green-600">
-                        <CheckBadgeIcon className="h-4 w-4 text-green-500" />
-                        <span>Paid</span>
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-1.5 text-red-600">
-                        <ExclamationTriangleIcon className="h-4 w-4 text-red-500" />
-                        <span>Not Paid</span>
-                      </span>
-                    )}
+                    <div className="mt-4">
+                      {order?.isPaid ? (
+                        <span className="flex items-center gap-1.5 text-green-600">
+                          <CheckBadgeIcon className="h-4 w-4 text-green-500" />
+                          <span>Paid</span>
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1.5 text-red-600">
+                          <ExclamationTriangleIcon className="h-4 w-4 text-red-500" />
+                          <span>Not Paid</span>
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </dd>
               </div>
@@ -168,8 +197,8 @@ const OrderScreen = () => {
                 {order?.orderItems?.map((product) => (
                   <li key={product._id} className="flex space-x-6 py-6">
                     <img
-                      src={product.image}
                       alt={product.name}
+                      src={product.image}
                       className="h-24 w-24 flex-none rounded-md bg-slate-100 object-cover object-center"
                     />
                     <div className="flex-auto space-y-1">
@@ -181,9 +210,9 @@ const OrderScreen = () => {
                       <p>Quantity: {product.qty}</p>
                     </div>
                     <p className="flex-none text-right font-medium text-slate-900">
-                      <span className="font-normal text-slate-900">
-                        {product.qty} x ₹{product.price}{" "}
-                      </span>
+                      <span className="font-normal text-gray-500">
+                        {product.qty} x ₹{product.price}
+                      </span>{" "}
                       = ₹{product.price * product.qty}
                     </p>
                   </li>
@@ -193,11 +222,9 @@ const OrderScreen = () => {
           </div>
 
           <div className="mt-14">
-            <h2 className="text-lg font-medium text-slate-900">
-              Order summary
-            </h2>
+            <h2 className="text-lg font-medium text-gray-900">Order summary</h2>
 
-            <div className="mt-4 rounded-lg border border-slate-200 bg-white shadow-sm">
+            <div className="mt-4 rounded-lg border border-gray-200 bg-white shadow-sm">
               <dl className="space-y-6 border-t border-gray-200 px-4 py-6 sm:px-6">
                 <div className="flex items-center justify-between">
                   <dt className="text-sm">Items</dt>
@@ -205,30 +232,27 @@ const OrderScreen = () => {
                     ₹{order.itemsPrice}
                   </dd>
                 </div>
-
                 <div className="flex items-center justify-between">
                   <dt className="text-sm">Shipping</dt>
                   <dd className="text-sm font-medium text-gray-900">
                     ₹{order.shippingPrice}
                   </dd>
                 </div>
-
                 <div className="flex items-center justify-between">
                   <dt className="text-sm">Taxes</dt>
                   <dd className="text-sm font-medium text-gray-900">
                     ₹{order.taxPrice}
                   </dd>
                 </div>
-
-                <div className="flex items-center justify-between">
-                  <dt className="text-sm">Total</dt>
-                  <dd className="text-sm font-medium text-gray-900">
+                <div className="flex items-center justify-between border-t border-gray-200 pt-6">
+                  <dt className="text-base font-medium">Total</dt>
+                  <dd className="text-base font-medium text-gray-900">
                     ₹{order.totalPrice}
                   </dd>
                 </div>
               </dl>
 
-              <div className="space-y-6 border-t border-slate-200 px-4 py-6 sm:px-6">
+              <div className="space-y-6 border-t border-gray-200 px-4 py-6 sm:px-6">
                 {!order.isPaid && (
                   <>
                     {loadingPay && <Loader />}
@@ -236,11 +260,17 @@ const OrderScreen = () => {
                       <Loader />
                     ) : (
                       <div>
-                        <PayPalButtons
-                          createOrder={createOrder}
-                          onApprove={onApprove}
-                          onError={onError}
-                        />
+                        {/* Comment it out later */}
+                        {/* <button className='mb-5' onClick={onApproveTest}>
+                          Test Pay Order
+                        </button> */}
+                        <div>
+                          <PayPalButtons
+                            createOrder={createOrder}
+                            onApprove={onApprove}
+                            onError={onError}
+                          />
+                        </div>
                       </div>
                     )}
                   </>
@@ -248,6 +278,23 @@ const OrderScreen = () => {
               </div>
 
               {isLoading && <Loader />}
+            </div>
+
+            <div className="mt-6">
+              {loadingDeliver && <Loader />}
+
+              {userInfo &&
+                userInfo.isAdmin &&
+                order.isPaid &&
+                !order.isDelivered && (
+                  <button
+                    onClick={handleDeliver}
+                    type="submit"
+                    className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-3 text-base font-medium text-white shadow-sm transition-all hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+                  >
+                    Mark as delivered
+                  </button>
+                )}
             </div>
           </div>
         </div>
