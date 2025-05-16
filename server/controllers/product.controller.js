@@ -47,4 +47,40 @@ const createProduct = async (req, res) => {
   res.status(201).json(createdProduct);
 };
 
-export { getProductById, getProducts, createProduct };
+/**
+ * @desc Update Product
+ * @route PUT/api/v1/products/:id
+ * @access Private/Admin
+ */
+
+const updateProduct = async (req, res) => {
+  const {
+    name,
+    price,
+    description,
+    image,
+    brand,
+    category,
+    countInStock,
+    content,
+  } = req.body;
+  const product = await ProductModel.findById(req.params.id);
+  if (product) {
+    product.name = name;
+    product.price = price;
+    product.description = description;
+    product.image = image;
+    product.brand = brand;
+    product.category = category;
+    product.countInStock = countInStock;
+    product.content = content;
+
+    const updatedProduct = await product.save();
+    res.json(updatedProduct);
+  } else {
+    res.status(404);
+    throw new Errork("Product not found");
+  }
+};
+
+export { getProductById, getProducts, createProduct, updateProduct };

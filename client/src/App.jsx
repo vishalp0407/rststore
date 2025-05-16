@@ -18,6 +18,7 @@ import OrderScreen from "@screens/Order";
 import ProfileScreen from "@screens/ProfileScreen";
 import OrderListScreen from "@screens/OrderList";
 import ProductListScreen from "@screens/ProductList";
+import ProductEditScreen from "@screens/ProductEdit";
 // Private Route
 import PrivateRoute from "@components/PrivateRoute";
 // ADMIN   Route
@@ -89,6 +90,10 @@ const router = createBrowserRouter([
           {
             path: "/admin/productlist",
             element: <ProductListScreen />,
+          },
+          {
+            path: "/admin/product/:id/edit",
+            element: <ProductEditScreen />,
           },
         ],
       },
