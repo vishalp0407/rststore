@@ -4,19 +4,32 @@ import { toast } from "react-toastify";
 import Alert from "@components/Alert";
 import Loader from "@components/Loader";
 import {
-  useGetProductsQuery,
   useCreateProductMutation,
+  useDeleteProductMutation,
+  useGetProductsQuery,
 } from "@slices/productApiSlice";
 
 const ProductListScreen = () => {
   const { data: products, error, isLoading, refetch } = useGetProductsQuery();
+
   const [createProduct, { isLoading: loadingCreate }] =
     useCreateProductMutation();
-  const handleDelte = async (id) => {
-    if (window.confirm("Are your sure?")) {
-      console.log("delete", id);
+
+  const [deleteProduct, { isLoading: loadingDelete }] =
+    useDeleteProductMutation();
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure?")) {
+      try {
+        await deleteProduct(id);
+        toast.success("Product deleted successfully");
+        refetch();
+      } catch (error) {
+        toast.error(error?.data?.message || error?.message);
+      }
     }
   };
+
   const handleCreateProduct = async () => {
     if (window.confirm("Are you sure you want to create a new product?")) {
       try {
@@ -27,6 +40,7 @@ const ProductListScreen = () => {
       }
     }
   };
+
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 pb-24 pt-16 sm:px-6 lg:max-w-7xl lg:px-8">
@@ -34,6 +48,7 @@ const ProductListScreen = () => {
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
             All Products
           </h1>
+
           <button
             onClick={handleCreateProduct}
             type="submit"
@@ -42,13 +57,14 @@ const ProductListScreen = () => {
             {loadingCreate ? "Loading..." : "Create Product"}
           </button>
         </div>
+
         {isLoading ? (
           <Loader />
         ) : error ? (
           <Alert type="error">{error?.data?.message || error?.message}</Alert>
         ) : (
           <div className="mt-8 flow-root">
-            <div className="-mx-4 -my-2 overflow-x-auto sm:mx-6 lg:-mx-8">
+            <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
               <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                 <table className="min-w-full divide-y divide-gray-300">
                   <thead>
@@ -116,6 +132,13 @@ const ProductListScreen = () => {
                           >
                             Edit
                           </Link>
+                          <button
+                            onClick={() => handleDelete(product._id)}
+                            type="button"
+                            className="ml-3 rounded bg-red-50 px-2 py-1 text-sm font-semibold text-red-700 shadow-sm ring-1 ring-inset ring-red-300 hover:bg-red-50"
+                          >
+                            {loadingDelete ? "Deleting..." : "Delete"}
+                          </button>
                         </td>
                       </tr>
                     ))}
