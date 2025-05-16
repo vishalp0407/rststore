@@ -8,6 +8,7 @@ import productRoutes from "#routes/product.route.js";
 import userRoutes from "#routes/user.route.js";
 import { errorHandler } from "#middlewares/error.middleware.js";
 import orderRoutes from "#routes/order.route.js";
+import uploadRoutes from "#routes/upload.route.js";
 
 dotenv.config();
 const port = process.env.PORT;
@@ -26,6 +27,7 @@ app.get("/", (req, res) => {
 app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/orders", orderRoutes);
+app.use("/api/v1/uploadk", uploadRoutes);
 app.get("/api/v1/config/paypal", (req, res) => {
   res.json({ clientId: process.env.PAYPAL_CLIENT_ID });
 });
