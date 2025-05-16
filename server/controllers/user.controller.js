@@ -66,7 +66,7 @@ const logoutUser = async (req, res) => {
     httpOnly: true,
     expires: new Date(0),
   });
-  res.status(200).json({message:'User logged out'})
+  res.status(200).json({ message: "User logged out" });
 };
 
 /**
@@ -126,7 +126,8 @@ const updateUserProfile = async (req, res) => {
  * @access	Private/Admin
  */
 const getUsers = async (req, res) => {
-  res.send("Get Users");
+  const users = await UserModel.find({});
+  res.status(200).json(users);
 };
 
 /**
@@ -135,7 +136,13 @@ const getUsers = async (req, res) => {
  * @access	Private/Admin
  */
 const getUserById = async (req, res) => {
-  res.send("Get user by ID");
+  const user = await UserModel.findById(req.params.id).select("-password");
+  if (user) {
+    res.status(200).json(user);
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
 };
 
 /**
@@ -144,7 +151,18 @@ const getUserById = async (req, res) => {
  * @access	Private/Admin
  */
 const deleteUser = async (req, res) => {
-  res.send("Delete user");
+  const user = await UserModel.findById(req.params.id);
+  if (user) {
+    if (user.isAdmin) {
+      res.status(400);
+      throw new Error("You cannot delete an admin user");
+    }
+    await UserModel.deleteOne({ _id: req.params.id });
+    res.status(200).json({ message: "User deleted successfully" });
+  } else {
+    res.status(404);
+    throw new error("User not found");
+  }
 };
 
 /**
@@ -153,7 +171,22 @@ const deleteUser = async (req, res) => {
  * @access	Private/Admin
  */
 const updateUser = async (req, res) => {
-  res.json("udate user profile");
+  const user = await UserModel.findById(req.params.id);
+  if (user) {
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+    user.isAdmin = req.body.isAdmin;
+    const updatedUser = await user.save();
+    res.status(200).json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      isAdmin: updatedUser.isAdmin,
+    });
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
 };
 
 export {
@@ -166,4 +199,5 @@ export {
   registerUser,
   updateUser,
   updateUserProfile,
+  getUsers,
 };
