@@ -19,6 +19,7 @@ import ProfileScreen from "@screens/ProfileScreen";
 import OrderListScreen from "@screens/OrderList";
 import ProductListScreen from "@screens/ProductList";
 import ProductEditScreen from "@screens/ProductEdit";
+import UserListScreen from "@screens/UserList";
 // Private Route
 import PrivateRoute from "@components/PrivateRoute";
 // ADMIN   Route
@@ -75,6 +76,10 @@ const router = createBrowserRouter([
           {
             path: "/profile",
             element: <ProfileScreen />,
+          },
+          {
+            path: "/admin/userlist",
+            element: <UserListScreen />,
           },
         ],
       },

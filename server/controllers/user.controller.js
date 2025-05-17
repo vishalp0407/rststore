@@ -199,5 +199,4 @@ export {
   registerUser,
   updateUser,
   updateUserProfile,
-  getUsers,
 };
