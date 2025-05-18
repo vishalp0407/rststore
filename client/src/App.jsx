@@ -20,6 +20,7 @@ import OrderListScreen from "@screens/OrderList";
 import ProductListScreen from "@screens/ProductList";
 import ProductEditScreen from "@screens/ProductEdit";
 import UserListScreen from "@screens/UserList";
+import UserEditScreens from "@screens/UserEdit";
 // Private Route
 import PrivateRoute from "@components/PrivateRoute";
 // ADMIN   Route
@@ -77,10 +78,6 @@ const router = createBrowserRouter([
             path: "/profile",
             element: <ProfileScreen />,
           },
-          {
-            path: "/admin/userlist",
-            element: <UserListScreen />,
-          },
         ],
       },
 
@@ -99,6 +96,14 @@ const router = createBrowserRouter([
           {
             path: "/admin/product/:id/edit",
             element: <ProductEditScreen />,
+          },
+          {
+            path: "/admin/userlist",
+            element: <UserListScreen />,
+          },
+          {
+            path: "/admin/user/:id/edit",
+            element: <UserEditScreens />,
           },
         ],
       },
